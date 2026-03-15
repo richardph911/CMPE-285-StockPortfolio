@@ -118,15 +118,13 @@ When two strategies are selected, weights are averaged and renormalised to 100%.
 
 ## How Money Is Divided
 
-Each stock receives a share of the invested capital proportional to its
-**combined_weight**. For example, with \$10,000 and a stock weighted at 30%:
-
-```
-alloc_usd = 10000 × 0.30 = $3,000
-shares    = 3000 / current_price
-```
-
----
+1. takes investment amount
+2. lets user pick 1 or 2 strategies
+3. map strategy → stocks
+4. divide money equally
+5. compute shares using live price
+6. sum stock values for portfolio
+7. track portfolio value for last 5 days
 
 ## Requirements
 
