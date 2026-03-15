@@ -104,15 +104,13 @@ Open `index.html` in your browser
 
 ## Investment Strategies & Stock Mappings
 
-| Strategy | Tickers                 | Weighting   |
-| -------- | ----------------------- | ----------- |
-| Ethical  | AAPL, ADBE, MSFT, NSRGY | 30/25/25/20 |
-| Growth   | NVDA, META, AMZN, TSLA  | 35/30/20/15 |
-| Index    | VTI, IXUS, ILTB         | 40/35/25    |
-| Quality  | JNJ, V, PG, UNH         | 30/30/25/15 |
-| Value    | BRK-B, JPM, XOM, CVX    | 35/30/20/15 |
-
-When two strategies are selected, weights are averaged and renormalised to 100%.
+| Strategy          | Tickers                |
+| ----------------- | ---------------------- |
+| Ethical Investing | AAPL, ADBE, MSFT       |
+| Growth Investing  | NVDA, META, AMZN, TSLA |
+| Index Investing   | VTI, IXUS, ILTB        |
+| Quality Investing | JNJ, V, PG, COST       |
+| Value Investing   | BRK-B, JPM, XOM, BAC   |
 
 ---
 
