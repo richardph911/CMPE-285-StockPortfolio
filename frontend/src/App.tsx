@@ -67,7 +67,9 @@ export default function App() {
     }
 
     try {
-      const res = await fetch('/api/portfolio', {
+      const BASE = import.meta.env.VITE_API_URL ?? ''
+
+      const res = await fetch(`${BASE}/api/portfolio`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount, strategies }),
