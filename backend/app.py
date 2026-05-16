@@ -7,6 +7,8 @@ CORS(app)
 
 @app.route("/api/portfolio", methods=["POST", "OPTIONS"])
 def portfolio():
+    if request.method == "OPTIONS":
+        return "", 200
     data = request.get_json()
     amount = float(data.get("amount", 0))
     strategies = data.get("strategies", [])
