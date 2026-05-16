@@ -1,11 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import traceback
-import os
-import sys
-
-# allow import from project root
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 app = Flask(__name__)
 CORS(app)
@@ -22,29 +16,37 @@ def portfolio():
     if request.method == "OPTIONS":
         return "", 200
 
-    try:
-        from backend.portfolio import generate_portfolio
+    data = request.get_json() or {}
 
-        data = request.get_json() or {}
+    amount = float(data.get("amount", 10000))
+    strategies = data.get("strategies", [])
 
-        amount = float(data.get("amount", 0))
-        strategies = data.get("strategies", [])
-
-        if amount < 5000:
-            return jsonify({"error": "Minimum investment is $5,000"}), 400
-
-        if not strategies:
-            return jsonify({"error": "Select at least one strategy"}), 400
-
-        result = generate_portfolio(amount, strategies)
-
-        if result is None:
-            return jsonify({"error": "No valid tickers found"}), 400
-
-        return jsonify(result)
-
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "trace": traceback.format_exc()
-        }), 500
+    return jsonify({
+        "investment": amount,
+        "selected_strategy_labels": strategies,
+        "total_current_value": amount + 25,
+        "portfolio": [
+            {
+                "ticker": "AAPL",
+                "allocation": amount * 0.5,
+                "current_price": 200,
+                "shares": (amount * 0.5) / 200,
+                "current_value": amount * 0.5
+            },
+            {
+                "ticker": "MSFT",
+                "allocation": amount * 0.5,
+                "current_price": 400,
+                "shares": (amount * 0.5) / 400,
+                "current_value": amount * 0.5 + 25
+            }
+        ],
+        "trend_labels": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+        "trend_values": [
+            amount,
+            amount - 50,
+            amount + 20,
+            amount + 10,
+            amount + 25
+        ]
+    })
