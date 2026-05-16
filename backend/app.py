@@ -4,7 +4,17 @@ from portfolio import generate_portfolio
 
 app = Flask(__name__)
 CORS(app)
-
+@app.route("/api/test", methods=["GET"])
+def test():
+    try:
+        import yfinance as yf
+        ticker = yf.Ticker("AAPL")
+        hist = ticker.history(period="1d")
+        if hist.empty:
+            return jsonify({"status": "yfinance returned empty data"})
+        return jsonify({"status": "ok", "price": float(hist["Close"].iloc[-1])})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
 @app.route("/api/portfolio", methods=["POST", "OPTIONS"])
 def portfolio():
     if request.method == "OPTIONS":
