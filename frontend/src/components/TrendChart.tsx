@@ -115,9 +115,7 @@ export default function TrendChart({ result }: Props) {
             fontSize="12"
             fontWeight="600"
             fill="currentColor"
-          >
-            Initial Investment {formatMoney(result.investment)}
-          </text>
+          ></text>
 
           {/* Trend line */}
           <path
