@@ -75,10 +75,21 @@ export default function App() {
         body: JSON.stringify({ amount, strategies }),
       })
 
-      const data = await res.json()
+      const text = await res.text()
+
+      let data
+      try {
+        data = text ? JSON.parse(text) : null
+      } catch {
+        throw new Error(text || 'Server returned invalid JSON')
+      }
 
       if (!res.ok) {
-        throw new Error(data.error || 'Server error')
+        throw new Error(data?.error || 'Server error')
+      }
+
+      if (!data) {
+        throw new Error('Server returned empty response')
       }
 
       setResult(data)
