@@ -4,8 +4,10 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/api/portfolio", methods=["POST"])
+@app.route("/api/portfolio", methods=["POST", "OPTIONS"])
 def portfolio():
+    if request.method == "OPTIONS":
+        return "", 200
     data = request.get_json()
 
     amount = data.get("amount")
