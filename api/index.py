@@ -4,7 +4,9 @@ from backend.portfolio import generate_portfolio
 
 app = Flask(__name__)
 CORS(app)
-
+@app.route("/api/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"})
 @app.route("/api/portfolio", methods=["POST", "OPTIONS"])
 def portfolio():
     if request.method == "OPTIONS":
