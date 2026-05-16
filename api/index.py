@@ -1,7 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from backend.portfolio import generate_portfolio
 import traceback
+import os
+import sys
+
+# allow import from project root
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 app = Flask(__name__)
 CORS(app)
@@ -19,6 +23,8 @@ def portfolio():
         return "", 200
 
     try:
+        from backend.portfolio import generate_portfolio
+
         data = request.get_json() or {}
 
         amount = float(data.get("amount", 0))
