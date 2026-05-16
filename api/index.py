@@ -10,13 +10,16 @@ CORS(app)
 def health():
     return jsonify({"status": "ok"})
 
-@app.route("/api/portfolio", methods=["POST", "OPTIONS"])
+@app.route("/api/portfolio", methods=["GET", "POST", "OPTIONS"])
 def portfolio():
+    if request.method == "GET":
+        return jsonify({"status": "portfolio API is working"})
+
     if request.method == "OPTIONS":
         return "", 200
 
     try:
-        data = request.get_json()
+        data = request.get_json() or {}
 
         amount = float(data.get("amount", 0))
         strategies = data.get("strategies", [])
