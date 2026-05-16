@@ -3,7 +3,7 @@ import type { PortfolioResult } from '../type/type'
 import SummaryCards from './SummaryCards'
 import HoldingsTable from './HoldingsTable'
 import TrendTable from './TrendTable'
-
+import TrendChart from './TrendChart'
 export default function PortfolioResultView({
   result,
 }: {
@@ -34,7 +34,7 @@ export default function PortfolioResultView({
         <SummaryCards result={result} />
 
         <HoldingsTable result={result} />
-
+        <TrendChart result={result} />
         <TrendTable result={result} />
       </CardContent>
     </Card>

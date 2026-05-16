@@ -1,5 +1,14 @@
-import { useState } from 'react'
-import { Box, Card, CardContent, Container } from '@mui/material'
+import { useMemo, useState } from 'react'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  CssBaseline,
+  ThemeProvider,
+  createTheme,
+} from '@mui/material'
 import PortfolioForm from './components/PortfolioForm'
 import PortfolioResultView from './components/PortfolioResult'
 import type { StrategyKey, PortfolioResult } from './type/type'
@@ -10,6 +19,26 @@ export default function App() {
   const [result, setResult] = useState<PortfolioResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem('theme') === 'dark',
+  )
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: darkMode ? 'dark' : 'light',
+        },
+      }),
+    [darkMode],
+  )
+
+  function toggleTheme() {
+    const nextMode = !darkMode
+    setDarkMode(nextMode)
+    localStorage.setItem('theme', nextMode ? 'dark' : 'light')
+  }
 
   function toggleStrategy(key: StrategyKey) {
     if (strategies.includes(key)) {
@@ -23,6 +52,19 @@ export default function App() {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setResult(null)
+
+    if (amount < 5000) {
+      setError('Minimum investment is $5,000')
+      setLoading(false)
+      return
+    }
+
+    if (strategies.length === 0) {
+      setError('Please select at least one strategy')
+      setLoading(false)
+      return
+    }
 
     try {
       const res = await fetch('/api/portfolio', {
@@ -32,33 +74,55 @@ export default function App() {
       })
 
       const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Server error')
+      }
+
       setResult(data)
-    } catch {
-      setError('Failed')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <Box sx={{ py: 6 }}>
-      <Container maxWidth="md">
-        <Card>
-          <CardContent>
-            <PortfolioForm
-              amount={amount}
-              setAmount={setAmount}
-              strategies={strategies}
-              toggleStrategy={toggleStrategy}
-              loading={loading}
-              error={error}
-              onSubmit={handleSubmit}
-            />
-          </CardContent>
-        </Card>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
 
-        {result && <PortfolioResultView result={result} />}
-      </Container>
-    </Box>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          bgcolor: 'background.default',
+          color: 'text.primary',
+          py: 6,
+        }}
+      >
+        <Container maxWidth="md">
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+            <Button variant="outlined" onClick={toggleTheme}>
+              {darkMode ? '☀ Light' : '☾ Dark'}
+            </Button>
+          </Box>
+
+          <Card sx={{ borderRadius: 4 }}>
+            <CardContent sx={{ p: { xs: 3, md: 5 } }}>
+              <PortfolioForm
+                amount={amount}
+                setAmount={setAmount}
+                strategies={strategies}
+                toggleStrategy={toggleStrategy}
+                loading={loading}
+                error={error}
+                onSubmit={handleSubmit}
+              />
+            </CardContent>
+          </Card>
+
+          {result && <PortfolioResultView result={result} />}
+        </Container>
+      </Box>
+    </ThemeProvider>
   )
 }

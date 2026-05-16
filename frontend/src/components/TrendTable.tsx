@@ -18,19 +18,21 @@ type Props = {
 }
 
 type ChangeMode = 'dollar' | 'percent'
+type CompareMode = 'daily' | 'total'
 
-function formatChange(diff: number, prev: number | null, mode: ChangeMode) {
+function formatChange(diff: number, base: number, mode: ChangeMode) {
   if (mode === 'dollar') {
     return diff >= 0 ? `+$${diff.toFixed(2)}` : `-$${Math.abs(diff).toFixed(2)}`
   }
 
-  const percent = prev ? (diff / prev) * 100 : 0
+  const percent = base ? (diff / base) * 100 : 0
 
   return percent >= 0 ? `+${percent.toFixed(2)}%` : `${percent.toFixed(2)}%`
 }
 
 export default function TrendTable({ result }: Props) {
   const [mode, setMode] = useState<ChangeMode>('dollar')
+  const [compareMode, setCompareMode] = useState<CompareMode>('daily')
 
   if (result.trend_values.length === 0) return null
 
@@ -62,9 +64,28 @@ export default function TrendTable({ result }: Props) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1,
+                    flexWrap: 'wrap',
                   }}
                 >
                   Change
+                  <ButtonGroup size="small" variant="outlined">
+                    <Button
+                      variant={
+                        compareMode === 'daily' ? 'contained' : 'outlined'
+                      }
+                      onClick={() => setCompareMode('daily')}
+                    >
+                      Daily
+                    </Button>
+                    <Button
+                      variant={
+                        compareMode === 'total' ? 'contained' : 'outlined'
+                      }
+                      onClick={() => setCompareMode('total')}
+                    >
+                      Total
+                    </Button>
+                  </ButtonGroup>
                   <ButtonGroup size="small" variant="outlined">
                     <Button
                       variant={mode === 'dollar' ? 'contained' : 'outlined'}
@@ -72,7 +93,6 @@ export default function TrendTable({ result }: Props) {
                     >
                       $
                     </Button>
-
                     <Button
                       variant={mode === 'percent' ? 'contained' : 'outlined'}
                       onClick={() => setMode('percent')}
@@ -87,19 +107,25 @@ export default function TrendTable({ result }: Props) {
 
           <TableBody>
             {result.trend_values.map((val, i) => {
-              const prev = i > 0 ? result.trend_values[i - 1] : null
-              const diff = prev !== null ? val - prev : null
+              const base =
+                compareMode === 'daily'
+                  ? i > 0
+                    ? result.trend_values[i - 1]
+                    : result.trend_values[0]
+                  : result.trend_values[0]
+
+              const diff = val - base
+              const isFirstDailyRow = compareMode === 'daily' && i === 0
 
               return (
                 <TableRow key={i}>
                   <TableCell>
                     {result.trend_labels[i] ?? `Day ${i + 1}`}
                   </TableCell>
-
                   <TableCell>${val.toLocaleString()}</TableCell>
 
                   <TableCell>
-                    {diff === null ? (
+                    {isFirstDailyRow ? (
                       '—'
                     ) : (
                       <Box
@@ -119,7 +145,7 @@ export default function TrendTable({ result }: Props) {
                           {diff >= 0 ? '▲' : '▼'}
                         </Box>
 
-                        {formatChange(diff, prev, mode)}
+                        {formatChange(diff, base, mode)}
                       </Box>
                     )}
                   </TableCell>
