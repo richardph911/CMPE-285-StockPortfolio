@@ -5,7 +5,7 @@ from portfolio import generate_portfolio
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/api/portfolio", methods=["POST"])
+@app.route("/api/portfolio", methods=["POST", "OPTIONS"])
 def portfolio():
     data = request.get_json()
     amount = float(data.get("amount", 0))
