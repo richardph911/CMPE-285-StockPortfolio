@@ -85,7 +85,8 @@ export default function App() {
       }
 
       if (!res.ok) {
-        throw new Error(data?.error || 'Server error')
+        console.log('Backend error:', data)
+        throw new Error(data?.error || data?.trace || 'Server error')
       }
 
       if (!data) {
